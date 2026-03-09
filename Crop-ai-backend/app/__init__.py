@@ -4,6 +4,7 @@ from app.routes.auth_routes import auth_bp
 from app.routes.crop_routes import crop_bp
 from app.routes.disease_routes import disease_bp
 from app.routes.chatbot_routes import chatbot_bp
+from app.routes.history_routes import history_bp
 
 
 def create_app():
@@ -25,5 +26,6 @@ def create_app():
     app.include_router(crop_bp)
     app.include_router(disease_bp)
     app.include_router(chatbot_bp)
+    app.include_router(history_bp)
 
     return app

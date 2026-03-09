@@ -20,6 +20,7 @@ class MongoDB:
 
         if cls._client is None:
             try:
+
                 # Create client using MONGO_URL from .env
                 cls._client = MongoClient(Settings.MONGO_URL)
 
@@ -49,3 +50,22 @@ class MongoDB:
             return cls.connect()
 
         return cls._database
+
+    # -----------------------------
+    # COLLECTION HELPERS
+    # -----------------------------
+
+    @classmethod
+    def get_user_collection(cls):
+        db = cls.get_database()
+        return db["users"]
+
+    @classmethod
+    def get_chat_history_collection(cls):
+        db = cls.get_database()
+        return db["chat_history"]
+
+    @classmethod
+    def get_activity_collection(cls):
+        db = cls.get_database()
+        return db["user_activity"]

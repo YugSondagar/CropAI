@@ -4,12 +4,13 @@ import numpy as np
 from app.utils.model_loader import get_crop_model
 from app.database.mongo import MongoDB
 from app.utils.custom_exception import AppException
+from app.services.activity_service import ActivityService
 
 
 class CropService:
 
     @staticmethod
-    def recommend_crop(input_data: dict):
+    def recommend_crop(user_id: str, input_data: dict):
 
         """
         input_data example:
@@ -27,7 +28,7 @@ class CropService:
         try:
             model = get_crop_model()
 
-            features = np.array([[
+            features = np.array([[ 
                 input_data["nitrogen"],
                 input_data["phosphorus"],
                 input_data["potassium"],
@@ -39,17 +40,26 @@ class CropService:
 
             prediction = model.predict(features)[0]
 
-            # Save to DB
+            # Connect to database
             db = MongoDB.get_database()
             collection = db["crop_recommendations"]
 
+            # Save recommendation record
             record = {
+                "user_id": user_id,
                 "input": input_data,
                 "recommended_crop": prediction,
                 "timestamp": datetime.utcnow()
             }
 
             collection.insert_one(record)
+
+            # Log activity
+            ActivityService.log_activity(
+                user_id=user_id,
+                activity="Crop Recommendation",
+                details=f"Recommended crop: {prediction}"
+            )
 
             return {
                 "recommended_crop": prediction

@@ -97,6 +97,39 @@ Crop Disease Detection
 │
 └── README.md
 
+frontend
+│
+├── index.html
+├── login.html
+├── register.html
+├── dashboard.html
+├── crop.html
+├── disease.html
+├── chatbot.html
+├── history.html
+│
+├── css
+│   ├── style.css
+│   ├── dashboard.css
+│
+├── js
+│   ├── config.js
+│   ├── auth.js
+│   ├── crop.js
+│   ├── disease.js
+│   ├── chatbot.js
+│   ├── history.js
+│
+└── assets
+    ├── logo.png
+    ├── hero-bg.jpg
+    ├── crop-icon.png
+    ├── disease-icon.png
+    ├── chatbot-icon.png
+    ├── upload-icon.png
+    ├── leaf-icon.png
+    ├── farmer-icon.png
+    └── favicon.png
 
 ---
 

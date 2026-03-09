@@ -12,15 +12,19 @@ chatbot_bp = APIRouter(
 
 
 @chatbot_bp.post("/message")
-async def chat(message: dict):
+async def chat(data: dict):
     try:
 
-        user_message = message.get("message")
+        user_id = data.get("user_id")
+        user_message = data.get("message")
+
+        if not user_id:
+            raise AppException("user_id is required", 400)
 
         if not user_message:
             raise AppException("Message is required", 400)
 
-        result = ChatbotService.get_response(user_message)
+        result = ChatbotService.get_response(user_id, user_message)
 
         return JSONResponse(
             status_code=200,

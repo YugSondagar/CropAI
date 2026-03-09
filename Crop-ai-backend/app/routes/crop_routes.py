@@ -3,7 +3,6 @@ from fastapi.responses import JSONResponse
 
 from app.services.crop_service import CropService
 from app.utils.custom_exception import AppException
-from app.models.crop_prediction_model import CropPredictionRequest
 
 
 crop_bp = APIRouter(
@@ -13,9 +12,22 @@ crop_bp = APIRouter(
 
 
 @crop_bp.post("/recommend")
-async def recommend_crop(input_data: CropPredictionRequest):
+async def recommend_crop(data: dict):
+
     try:
-        result = CropService.recommend_crop(input_data)
+
+        user_id = data.get("user_id")
+
+        if not user_id:
+            raise AppException("User ID is required", 400)
+
+        # remove user_id from crop inputs
+        crop_inputs = {k: v for k, v in data.items() if k != "user_id"}
+
+        result = CropService.recommend_crop(
+            user_id=user_id,
+            input_data=crop_inputs
+        )
 
         return JSONResponse(
             status_code=200,
