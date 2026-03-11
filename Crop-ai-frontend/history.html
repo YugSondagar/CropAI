@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity History - CropAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .history-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .history-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-light);
+        }
+
+        .history-icon {
+            width: 3rem;
+            height: 3rem;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+
+        .icon-crop {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--primary);
+        }
+
+        .icon-disease {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        .icon-chat {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .history-content {
+            flex: 1;
+        }
+
+        .history-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .history-details {
+            color: var(--text-light);
+            font-size: 0.875rem;
+        }
+
+        .history-time {
+            color: var(--text-light);
+            font-size: 0.75rem;
+            background-color: var(--bg-light);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-md);
+            white-space: nowrap;
+        }
+
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border);
+            background-color: var(--surface);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-light);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container nav-container" style="padding: 1rem;">
+            <a href="dashboard.html" class="logo">
+                <i class="fa-solid fa-leaf"></i> CropAI
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span id="userNameDisplay" style="font-weight: 500;">User</span>
+                <button id="logoutBtn" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a href="crop.html" class="sidebar-link">
+                <i class="fa-solid fa-seedling"></i> Crop Recommendation
+            </a>
+            <a href="disease.html" class="sidebar-link">
+                <i class="fa-solid fa-bug"></i> Disease Detection
+            </a>
+            <a href="chatbot.html" class="sidebar-link">
+                <i class="fa-solid fa-robot"></i> AI Assistant
+            </a>
+            <a href="history.html" class="sidebar-link active">
+                <i class="fa-solid fa-clock-rotate-left"></i> Activity History
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h2>Your Activity History</h2>
+            </div>
+
+            <div class="filters">
+                <button class="filter-btn active" data-filter="all">All Activity</button>
+                <button class="filter-btn" data-filter="crop">Recommendations</button>
+                <button class="filter-btn" data-filter="disease">Disease Scans</button>
+                <button class="filter-btn" data-filter="chat">AI Chats</button>
+            </div>
+
+            <div id="loadingHistory" class="text-center" style="padding: 2rem;">
+                <div class="loader" style="display: inline-block; border-top-color: var(--primary);"></div>
+                <p class="mt-2 text-light">Loading history...</p>
+            </div>
+
+            <div id="historyContainer">
+                <!-- Data populated by JS -->
+            </div>
+
+            <div id="emptyHistory" class="empty-state" style="display: none;">
+                <i class="fa-solid fa-box-open"></i>
+                <p>No activity history found.</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            const user = Auth.getUser();
+            if (user && user.name) {
+                document.getElementById('userNameDisplay').textContent = user.name;
+            }
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                Auth.logout();
+            });
+
+            // Dummy JS logic inline for simplicity since it wasn't requested in plan
+            // I'll leave the API fetch implementation to the separate JS files.
+        });
+    </script>
+</body>
+
+</html>

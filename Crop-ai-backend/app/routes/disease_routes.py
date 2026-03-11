@@ -1,8 +1,9 @@
-from fastapi import APIRouter, UploadFile, File, Form
+from fastapi import APIRouter, UploadFile, File, Request
 from fastapi.responses import JSONResponse
 
 from app.services.disease_service import DiseaseService
 from app.utils.custom_exception import AppException
+from app.utils.jwt_helper import get_user_from_token
 
 
 disease_bp = APIRouter(
@@ -13,18 +14,18 @@ disease_bp = APIRouter(
 
 @disease_bp.post("/predict")
 async def predict_disease(
-    user_id: str = Form(...),
+    request: Request,
     file: UploadFile = File(...)
 ):
-
     try:
+        token = request.headers.get("Authorization", "").replace("Bearer ", "")
+        user_id = get_user_from_token(token)
 
         # Read image bytes
         image_bytes = await file.read()
 
         # Call service
         result = DiseaseService.predict_disease(
-            user_id=user_id,
             image_bytes=image_bytes
         )
 
@@ -37,7 +38,6 @@ async def predict_disease(
         )
 
     except AppException as e:
-
         return JSONResponse(
             status_code=e.status_code,
             content={

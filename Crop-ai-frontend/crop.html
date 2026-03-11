@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation - CropAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .grid-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .result-card {
+            display: none;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(13, 148, 136, 0.1) 100%);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .result-card h3 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .result-card .crop-name {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            text-transform: capitalize;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container nav-container" style="padding: 1rem;">
+            <a href="dashboard.html" class="logo">
+                <i class="fa-solid fa-leaf"></i> CropAI
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span id="userNameDisplay" style="font-weight: 500;">User</span>
+                <button id="logoutBtn" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a href="crop.html" class="sidebar-link active">
+                <i class="fa-solid fa-seedling"></i> Crop Recommendation
+            </a>
+            <a href="disease.html" class="sidebar-link">
+                <i class="fa-solid fa-bug"></i> Disease Detection
+            </a>
+            <a href="chatbot.html" class="sidebar-link">
+                <i class="fa-solid fa-robot"></i> AI Assistant
+            </a>
+            <a href="history.html" class="sidebar-link">
+                <i class="fa-solid fa-clock-rotate-left"></i> Activity History
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2 class="mb-4">Crop Recommendation</h2>
+            <p class="text-light mb-8">Enter your soil and weather parameters to get the best crop suggestion powered by
+                ML.</p>
+
+            <div
+                style="background-color: var(--surface); padding: 2rem; border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--border);">
+                <form id="cropForm">
+                    <div class="grid-form">
+                        <div class="form-group">
+                            <label for="nitrogen">Nitrogen (N) Content</label>
+                            <input type="number" id="nitrogen" class="form-control" required placeholder="e.g. 90"
+                                min="0" step="any">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phosphorus">Phosphorus (P) Content</label>
+                            <input type="number" id="phosphorus" class="form-control" required placeholder="e.g. 42"
+                                min="0" step="any">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="potassium">Potassium (K) Content</label>
+                            <input type="number" id="potassium" class="form-control" required placeholder="e.g. 43"
+                                min="0" step="any">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="temperature">Temperature (°C)</label>
+                            <input type="number" id="temperature" class="form-control" required placeholder="e.g. 20.8"
+                                step="any">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="humidity">Humidity (%)</label>
+                            <input type="number" id="humidity" class="form-control" required placeholder="e.g. 82.0"
+                                min="0" max="100" step="any">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="ph">pH Value</label>
+                            <input type="number" id="ph" class="form-control" required placeholder="e.g. 6.5" min="0"
+                                max="14" step="any">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="rainfall">Rainfall (mm)</label>
+                            <input type="number" id="rainfall" class="form-control" required placeholder="e.g. 202.9"
+                                min="0" step="any">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-4">
+                        <span>Get Recommendation</span>
+                        <div class="loader" id="cropLoader"></div>
+                    </button>
+                    <div id="cropError" class="mt-4" style="color: #ef4444; display: none;"></div>
+                </form>
+
+                <div id="resultCard" class="result-card">
+                    <h3>Recommended Crop</h3>
+                    <div class="crop-name" id="predictedCrop">Apple</div>
+                    <p class="text-light mt-2">Based on the provided soil and atmospheric conditions.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/crop.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            const user = Auth.getUser();
+            if (user && user.name) {
+                document.getElementById('userNameDisplay').textContent = user.name;
+            }
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                Auth.logout();
+            });
+        });
+    </script>
+</body>
+
+</html>

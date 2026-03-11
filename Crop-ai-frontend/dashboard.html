@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CropAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="container nav-container" style="padding: 1rem;">
+            <a href="dashboard.html" class="logo">
+                <i class="fa-solid fa-leaf"></i> CropAI
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span id="userNameDisplay" style="font-weight: 500;">User</span>
+                <button id="logoutBtn" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="dashboard.html" class="sidebar-link active">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a href="crop.html" class="sidebar-link">
+                <i class="fa-solid fa-seedling"></i> Crop Recommendation
+            </a>
+            <a href="disease.html" class="sidebar-link">
+                <i class="fa-solid fa-bug"></i> Disease Detection
+            </a>
+            <a href="chatbot.html" class="sidebar-link">
+                <i class="fa-solid fa-robot"></i> AI Assistant
+            </a>
+            <a href="history.html" class="sidebar-link">
+                <i class="fa-solid fa-clock-rotate-left"></i> Activity History
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h2 class="mb-8">Welcome to your Dashboard</h2>
+
+            <div class="stat-cards">
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.1s;">
+                    <div class="stat-icon"><i class="fa-solid fa-seedling"></i></div>
+                    <div class="stat-info">
+                        <h4>Recommendations</h4>
+                        <p id="statRecommendations">0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.2s;">
+                    <div class="stat-icon"><i class="fa-solid fa-bug"></i></div>
+                    <div class="stat-info">
+                        <h4>Disease Scans</h4>
+                        <p id="statScans">0</p>
+                    </div>
+                </div>
+
+                <div class="stat-card animate-fade-in" style="animation-delay: 0.3s;">
+                    <div class="stat-icon"><i class="fa-solid fa-comment-dots"></i></div>
+                    <div class="stat-info">
+                        <h4>AI Chats</h4>
+                        <p id="statChats">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-grid mt-8">
+                <a href="crop.html" class="feature-card animate-fade-in"
+                    style="text-decoration: none; color: inherit; animation-delay: 0.4s;">
+                    <div class="feature-icon"><i class="fa-solid fa-seedling"></i></div>
+                    <h3>Crop Recommendation</h3>
+                    <p>Get AI-powered suggestions for the best crop to grow base on soil data.</p>
+                </a>
+
+                <a href="disease.html" class="feature-card animate-fade-in"
+                    style="text-decoration: none; color: inherit; animation-delay: 0.5s;">
+                    <div class="feature-icon"><i class="fa-solid fa-camera"></i></div>
+                    <h3>Detect Disease</h3>
+                    <p>Upload a plant leaf photo and instantly detect diseases.</p>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- Ensure user is logged in -->
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const user = Auth.getUser();
+            if (user && user.name) {
+                document.getElementById('userNameDisplay').textContent = user.name;
+            }
+
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                Auth.logout();
+            });
+
+            // Note: We will fetch stats dynamically via history endpoint later.
+        });
+    </script>
+</body>
+
+</html>

@@ -1,6 +1,8 @@
 from app.utils.custom_exception import AppException
 from app.services.chat_history_service import ChatHistoryService
 from app.services.activity_service import ActivityService
+import os
+from groq import Groq
 
 
 class ChatbotService:
@@ -8,20 +10,42 @@ class ChatbotService:
     @staticmethod
     def get_response(user_id: str, message: str):
         """
-        Process chatbot message, store chat history
-        and log user activity
+        Process chatbot message using Groq LLaMA-3.3-70b-versatile,
+        store chat history and log user activity.
         """
 
         try:
+            # Build conversation messages
+            messages = [
+                {
+                    "role": "system",
+                    "content": (
+                        "You are CropAI, a helpful expert assistant specialized in agriculture, "
+                        "crop farming, plant diseases, soil management, and sustainable farming practices. "
+                        "Provide concise, practical, and accurate answers for farmers and agronomists."
+                    )
+                }
+            ]
 
-            # Basic placeholder response (can replace with LLM later)
-            reply = f"You said: {message}"
+            # Add the current user message
+            messages.append({"role": "user", "content": message})
 
-            # Save chat history
+            # Call Groq API
+            client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=messages,
+                temperature=0.7,
+                max_tokens=1024,
+            )
+
+            reply = completion.choices[0].message.content
+
+            # Save chat history with user_id
             ChatHistoryService.save_chat(
                 user_id=user_id,
-                message=message,
-                response=reply
+                user_message=message,
+                bot_reply=reply
             )
 
             # Save user activity

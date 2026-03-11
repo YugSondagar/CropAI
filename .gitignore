@@ -17,3 +17,6 @@ Thumbs.db
 
 # Jupyter
 .ipynb_checkpoints/
+
+#ignoring the todo list
+TODO.md

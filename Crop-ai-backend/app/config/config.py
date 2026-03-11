@@ -29,3 +29,16 @@ class Settings:
     )
 
     MODELS_DIR = os.path.join(BASE_DIR, "models")
+    
+    # ==========================
+    # Disease Classification
+    # ==========================
+    # Lazy load to avoid circular import
+    _class_names = None
+    
+    @classmethod
+    def get_class_names(cls):
+        if cls._class_names is None:
+            from app.config.class_names import CLASS_NAMES
+            cls._class_names = CLASS_NAMES
+        return cls._class_names

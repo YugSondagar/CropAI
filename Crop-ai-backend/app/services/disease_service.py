@@ -25,6 +25,8 @@ class DiseaseService:
             # 2️⃣ Load Model
             # -------------------------
             model = get_disease_model()
+            
+            # Ensure model is in evaluation mode (already set in loader, but double check)
             model.eval()
 
             # -------------------------

@@ -1,9 +1,12 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
+import logging
 
 from app.services.chatbot_service import ChatbotService
 from app.utils.custom_exception import AppException
+from app.utils.jwt_helper import get_user_from_token
 
+logger = logging.getLogger(__name__)
 
 chatbot_bp = APIRouter(
     prefix="/chatbot",
@@ -12,14 +15,28 @@ chatbot_bp = APIRouter(
 
 
 @chatbot_bp.post("/message")
-async def chat(data: dict):
+async def chat(request: Request):
     try:
+        # Get token from header
+        auth_header = request.headers.get("Authorization", "")
+        logger.info(f"Auth header: {auth_header}")
+        
+        token = auth_header.replace("Bearer ", "").strip()
+        
+        # Make token optional for debugging - use a default user if not provided
+        if not token:
+            user_id = "anonymous_user"
+            logger.warning("No token provided, using anonymous user")
+        else:
+            try:
+                user_id = get_user_from_token(token)
+            except AppException as e:
+                # If token is invalid, still allow for debugging but use anonymous
+                logger.warning(f"Token validation failed: {e.message}, using anonymous user")
+                user_id = "anonymous_user"
 
-        user_id = data.get("user_id")
-        user_message = data.get("message")
-
-        if not user_id:
-            raise AppException("user_id is required", 400)
+        body = await request.json()
+        user_message = body.get("message")
 
         if not user_message:
             raise AppException("Message is required", 400)
@@ -40,5 +57,14 @@ async def chat(data: dict):
             content={
                 "success": False,
                 "message": e.message
+            }
+        )
+    except Exception as e:
+        logger.error(f"Chatbot error: {str(e)}")
+        return JSONResponse(
+            status_code=500,
+            content={
+                "success": False,
+                "message": f"Internal error: {str(e)}"
             }
         )

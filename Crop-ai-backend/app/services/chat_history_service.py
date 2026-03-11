@@ -8,9 +8,9 @@ class ChatHistoryService:
     collection_name = "chat_history"
 
     @staticmethod
-    def save_chat(user_message: str, bot_reply: str):
+    def save_chat(user_id: str, user_message: str, bot_reply: str):
         """
-        Save chat message and bot response in MongoDB
+        Save chat message and bot response in MongoDB with user_id
         """
 
         try:
@@ -19,6 +19,7 @@ class ChatHistoryService:
             collection = db[ChatHistoryService.collection_name]
 
             chat_data = {
+                "user_id": user_id,
                 "user_message": user_message,
                 "bot_reply": bot_reply,
                 "timestamp": datetime.utcnow()
@@ -33,9 +34,9 @@ class ChatHistoryService:
             )
 
     @staticmethod
-    def get_chat_history(limit: int = 20):
+    def get_chat_history(user_id: str = None, limit: int = 20):
         """
-        Get last N chat messages
+        Get last N chat messages, optionally filtered by user_id
         """
 
         try:
@@ -43,9 +44,12 @@ class ChatHistoryService:
             db = MongoDB.get_database()
             collection = db[ChatHistoryService.collection_name]
 
+            # Build query - filter by user_id if provided
+            query = {"user_id": user_id} if user_id else {}
+            
             chats = list(
                 collection
-                .find({}, {"_id": 0})
+                .find(query, {"_id": 0})
                 .sort("timestamp", -1)
                 .limit(limit)
             )

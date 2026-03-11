@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Detection - CropAI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-lg);
+            padding: 4rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: var(--bg-light);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-light);
+            margin-bottom: 1rem;
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview-container {
+            display: none;
+            margin-top: 2rem;
+            text-align: center;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border);
+        }
+
+        .result-card {
+            display: none;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+            box-shadow: var(--shadow-md);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .disease-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ef4444;
+            /* Red for disease by default */
+            margin: 1rem 0;
+            text-transform: capitalize;
+        }
+
+        .disease-name.healthy {
+            color: var(--primary);
+        }
+
+        .confidence-bar-bg {
+            background-color: var(--bg-light);
+            height: 8px;
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .confidence-bar-fill {
+            background-color: var(--primary);
+            height: 100%;
+            width: 0%;
+            transition: width 1s ease-out;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="container nav-container" style="padding: 1rem;">
+            <a href="dashboard.html" class="logo">
+                <i class="fa-solid fa-leaf"></i> CropAI
+            </a>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <span id="userNameDisplay" style="font-weight: 500;">User</span>
+                <button id="logoutBtn" class="btn btn-secondary" style="padding: 0.5rem 1rem;">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="fa-solid fa-house"></i> Home
+            </a>
+            <a href="crop.html" class="sidebar-link">
+                <i class="fa-solid fa-seedling"></i> Crop Recommendation
+            </a>
+            <a href="disease.html" class="sidebar-link active">
+                <i class="fa-solid fa-bug"></i> Disease Detection
+            </a>
+            <a href="chatbot.html" class="sidebar-link">
+                <i class="fa-solid fa-robot"></i> AI Assistant
+            </a>
+            <a href="history.html" class="sidebar-link">
+                <i class="fa-solid fa-clock-rotate-left"></i> Activity History
+            </a>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div style="max-width: 800px; margin: 0 auto;">
+                <h2 class="mb-4 text-center">Plant Disease Detection</h2>
+                <p class="text-light mb-8 text-center">Upload an image of a plant leaf to detect potential diseases
+                    instantly.</p>
+
+                <div class="upload-area" id="dropZone">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <h3>Drag & Drop leaf image here</h3>
+                    <p class="text-light mt-2">or click to browse files</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+
+                <div class="preview-container" id="previewContainer">
+                    <img id="imagePreview" class="preview-image" src="" alt="Image Preview">
+                    <div class="mt-4">
+                        <button id="analyzeBtn" class="btn btn-primary">
+                            <span>Analyze Image</span>
+                            <div class="loader" id="analyzeLoader"></div>
+                        </button>
+                        <button id="resetBtn" class="btn btn-secondary" style="margin-left: 1rem;">Clear</button>
+                    </div>
+                </div>
+
+                <div id="diseaseError" class="mt-4 text-center" style="color: #ef4444; display: none;"></div>
+
+                <div id="resultCard" class="result-card">
+                    <h3 class="text-light">Analysis Result</h3>
+                    <div class="disease-name" id="predictedDisease">Target Spot</div>
+
+                    <div style="text-align: left; margin-top: 1.5rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--text-light);">
+                            <span>Confidence Score</span>
+                            <span id="confidenceText" style="font-weight: 600; color: var(--text-dark);">98.5%</span>
+                        </div>
+                        <div class="confidence-bar-bg">
+                            <div class="confidence-bar-fill" id="confidenceBar"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/disease.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!Auth.isAuthenticated()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            const user = Auth.getUser();
+            if (user && user.name) {
+                document.getElementById('userNameDisplay').textContent = user.name;
+            }
+            document.getElementById('logoutBtn').addEventListener('click', () => {
+                Auth.logout();
+            });
+        });
+    </script>
+</body>
+
+</html>

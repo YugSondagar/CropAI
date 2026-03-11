@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from app.services.crop_service import CropService
 from app.utils.custom_exception import AppException
+from app.utils.jwt_helper import get_user_from_token
 
 
 crop_bp = APIRouter(
@@ -12,17 +13,12 @@ crop_bp = APIRouter(
 
 
 @crop_bp.post("/recommend")
-async def recommend_crop(data: dict):
-
+async def recommend_crop(request: Request):
     try:
+        token = request.headers.get("Authorization", "").replace("Bearer ", "")
+        user_id = get_user_from_token(token)
 
-        user_id = data.get("user_id")
-
-        if not user_id:
-            raise AppException("User ID is required", 400)
-
-        # remove user_id from crop inputs
-        crop_inputs = {k: v for k, v in data.items() if k != "user_id"}
+        crop_inputs = await request.json()
 
         result = CropService.recommend_crop(
             user_id=user_id,
