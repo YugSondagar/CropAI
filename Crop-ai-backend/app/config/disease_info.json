@@ -1,0 +1,61 @@
+{
+  "Apple___Apple_scab": {
+    "cause": "Fungus Venturia inaequalis spreads through rain, wind, and infected leaves",
+    "prevention": "Apply fungicides (captan, mancozeb), prune for air circulation, remove fallen leaves, use resistant varieties, maintain soil pH 6.0-6.5"
+  },
+  "Apple___Black_rot": {
+    "cause": "Fungus Botryosphaeria obtusa in warm, wet conditions affecting wood and fruit",
+    "prevention": "Fungicides (captan), prune infected branches, improve air circulation, apply copper-based fungicides in spring, balanced NPK fertilization"
+  },
+  "Apple___Cedar_apple_rust": {
+    "cause": "Fungus Gymnosporangium juniperi-virginianae alternates between cedar and apple",
+    "prevention": "Remove cedar hosts, fungicides (triazoles), resistant apple varieties, prune for sunlight, spring foliar NPK spray"
+  },
+  "Blueberry___healthy": {"cause": "Healthy plant", "prevention": "N/A"},
+  "Cherry___Powdery_mildew": {
+    "cause": "Fungus Podosphaera clandestine spreads in humid conditions",
+    "prevention": "Fungicides (sulfur, potassium bicarbonate), improve air flow, avoid overhead watering, soil potassium supplementation"
+  },
+  "Corn___Cercospora_leaf_spot Gray_leaf_spot": {
+    "cause": "Fungus Cercospora zeae-maydis in warm, humid weather",
+    "prevention": "Fungicides (azoxystrobin), resistant hybrids, crop rotation, balanced NPK, remove crop residue"
+  },
+  "Corn___Common_rust": {
+    "cause": "Fungus Puccinia sorghi spores spread by wind",
+    "prevention": "Resistant hybrids, fungicides (triazoles), timely planting, crop rotation, foliar nitrogen + potassium"
+  },
+  "Corn___Northern_Leaf_Blight": {
+    "cause": "Fungus Setosphaeria turcica in moderate temperatures",
+    "prevention": "Resistant varieties, fungicides (propiconazole), wider row spacing, crop rotation, balanced soil NPK"
+  },
+  "Grape___Black_rot": {
+    "cause": "Fungus Guignardia bidwellii in warm wet weather",
+    "prevention": "Fungicides (mancozeb), remove mummies, canopy management, potassium-rich soil amendments"
+  },
+  "Potato___Early_blight": {
+    "cause": "Fungus Alternaria solani spreads via rain splash and infected debris",
+    "prevention": "Fungicides (chlorothalonil), crop rotation 3+ years, remove volunteers, mulch, balanced NPK (more potassium), drip irrigation"
+  },
+  "Potato___Late_blight": {
+    "cause": "Water mold Phytophthora infestans in cool, wet conditions",
+    "prevention": "Fungicides (mancozeb + metalaxyl), resistant varieties, destroy volunteers, proper spacing, high potassium soil, avoid overhead watering"
+  },
+  "Soybean___healthy": {"cause": "Healthy plant", "prevention": "N/A"},
+  "Strawberry___Leaf_scorch": {
+    "cause": "Fungus Mycosphaerella fragariae in cool wet weather",
+    "prevention": "Fungicides (captan), remove infected leaves, improve air circulation, potassium soil amendments"
+  },
+  "Tomato___Bacterial_spot": {
+    "cause": "Bacteria Xanthomonas spp. spread by rain splash",
+    "prevention": "Copper bactericides, crop rotation, remove infected debris, disease-free seeds, fixed copper + potassium foliar spray"
+  },
+  "Tomato___Early_blight": {
+    "cause": "Fungus Alternaria solani on lower leaves during wet periods",
+    "prevention": "Fungicides (chlorothalonil), mulch, stake plants, crop rotation, potassium-rich soil, remove lower leaves"
+  },
+  "Tomato___Late_blight": {
+    "cause": "Phytophthora infestans in cool, moist conditions",
+    "prevention": "Protective fungicides (chlorothalonil), resistant varieties, proper spacing, destroy debris, high potassium NPK"
+  },
+  "Tomato___healthy": {"cause": "Healthy plant", "prevention": "N/A"}
+}

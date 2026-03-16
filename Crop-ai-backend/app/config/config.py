@@ -19,7 +19,7 @@ class Settings:
     # ==========================
     # Image Config
     # ==========================
-    IMAGE_SIZE = (224, 224)
+    IMAGE_SIZE = (256, 256)
 
     # ==========================
     # Models Directory
@@ -42,3 +42,4 @@ class Settings:
             from app.config.class_names import CLASS_NAMES
             cls._class_names = CLASS_NAMES
         return cls._class_names
+

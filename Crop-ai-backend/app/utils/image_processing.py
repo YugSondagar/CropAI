@@ -9,7 +9,7 @@ from app.utils.custom_exception import AppException
 class ImageProcessor:
 
     @staticmethod
-    def preprocess_image(image_bytes, target_size=(224, 224)):
+    def preprocess_image(image_bytes, target_size=(256, 256)):
         """
         Preprocess uploaded image for plant disease model using PyTorch.
 
@@ -27,14 +27,10 @@ class ImageProcessor:
             # Convert to RGB (important!)
             image = image.convert("RGB")
 
-            # Define PyTorch transforms (ImageNet normalization)
+            # Define PyTorch transforms matching training notebook
             transform = transforms.Compose([
                 transforms.Resize(target_size),
                 transforms.ToTensor(),
-                transforms.Normalize(
-                    mean=[0.485, 0.456, 0.406],
-                    std=[0.229, 0.224, 0.225]
-                )
             ])
 
             # Apply transforms
@@ -50,3 +46,4 @@ class ImageProcessor:
                 f"Error processing image: {str(e)}",
                 400
             )
+

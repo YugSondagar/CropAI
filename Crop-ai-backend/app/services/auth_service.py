@@ -5,6 +5,7 @@ import bcrypt
 import jwt
 import os
 
+from app.utils.logger import logger
 JWT_SECRET = os.environ.get("JWT_SECRET", "super-secret-key-123")
 JWT_ALGORITHM = "HS256"
 
@@ -55,6 +56,10 @@ class AuthService:
             # Verify password
             if not bcrypt.checkpw(user_data["password"].encode('utf-8'), db_user["password"].encode('utf-8')):
                 raise AppException("Invalid credentials", 401)
+            
+            # Log login activity
+            from app.services.activity_service import ActivityService
+            ActivityService.log_activity(db_user["email"], "Login", "User logged in successfully")
                 
             # Generate JWT
             payload = {
@@ -63,6 +68,7 @@ class AuthService:
                 "exp": datetime.utcnow() + timedelta(days=1)
             }
             token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+            logger.info(f"AUTH DEBUG: Generated token for user={db_user['email']}, payload={payload}, token_preview={token[:30]}...")
 
             return {
                 "access_token": token,
